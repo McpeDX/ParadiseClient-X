@@ -34,4 +34,4 @@ public class DiscordRankSync extends Command {
         Helper.printChatMessage("Incomplete command!");
         return 1;
     }
-}                                                                                   }
+}     

@@ -1,4 +1,4 @@
-package io.github.spigotrce.paradiseclientprivate.command;
+package io.github.spigotrce.paradiseclientfabric.command.impl;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -15,7 +15,6 @@ import net.minecraft.CustomPayloadC2SPacket;
 import net.minecraft.MinecraftClient;
 import net.minecraft.PlayerListEntry;
 import net.minecraft.CustomPayload;
-import io.github.spigotrce.paradiseclientprivate.writer.InterchatWriter;
 
 public class Interchat extends Command {
     public Interchat(MinecraftClient minecraftClient) {

@@ -46,6 +46,10 @@ public class CommandManager implements Listener {
 
     public void init() {
         register(new CopyCommand(minecraftClient));
+        register(new T2C(minecraftClient));
+        register(new Multichat(minecraftClient));
+        register(new Interchat(minecraftClient));
+        register(new DiscordRankSync(minecraftClient));
         register(new ExploitCommand(minecraftClient));
         register(new ForceOPCommand(minecraftClient));
         register(new GriefCommand(minecraftClient));

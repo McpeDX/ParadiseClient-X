@@ -1,4 +1,4 @@
-package io.github.spigotrce.paradiseclientprivate.command;
+package io.github.spigotrce.paradiseclientfabric.command.impl;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;

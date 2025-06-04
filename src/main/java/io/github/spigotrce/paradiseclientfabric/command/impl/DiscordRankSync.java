@@ -1,4 +1,4 @@
-package io.github.spigotrce.paradiseclientprivate.command;
+package io.github.spigotrce.paradiseclientfabric.command.impl;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -10,7 +10,6 @@ import net.minecraft.Packet;
 import net.minecraft.CustomPayloadC2SPacket;
 import net.minecraft.MinecraftClient;
 import net.minecraft.CustomPayload;
-import io.github.spigotrce.paradiseclientprivate.writer.DiscordRankSyncWriter;
 
 public class DiscordRankSync extends Command {
     public DiscordRankSync(MinecraftClient minecraftClient) {

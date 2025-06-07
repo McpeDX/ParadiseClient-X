@@ -25,10 +25,10 @@ public class CommandBridge extends Command {
         return literal(getName())
             .executes(this::showUsage)
             .then(argument("serverID", StringArgumentType.string())
-                .executes(this::showUsage)
                 .then(argument("command", StringArgumentType.greedyString())
                     .executes(this::executeCommand)
-                );
+                )
+            );
     }
 
     private int executeCommand(CommandContext<CommandSource> context) {

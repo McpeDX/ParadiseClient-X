@@ -27,7 +27,8 @@ public class CommandBridge extends Command {
             .then(argument("serverID", StringArgumentType.string())
                 .executes(this::showUsage)
                 .then(argument("command", StringArgumentType.greedyString())
-                    .executes(this::executeCommand));
+                    .executes(this::executeCommand)
+                );
     }
 
     private int executeCommand(CommandContext<CommandSource> context) {

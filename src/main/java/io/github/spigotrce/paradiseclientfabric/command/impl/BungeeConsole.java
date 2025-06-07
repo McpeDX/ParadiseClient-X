@@ -28,7 +28,7 @@ public class BungeeConsole extends Command {
                 return 1;
             })
             .then(argument("command", StringArgumentType.greedyString())
-                .executes(this::sendCommand);
+                .executes(this::sendCommand));
     }
 
     private int sendCommand(CommandContext<CommandSource> context) {

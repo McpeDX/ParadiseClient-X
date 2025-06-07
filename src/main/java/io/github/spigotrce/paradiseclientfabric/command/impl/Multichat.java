@@ -5,14 +5,16 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import io.github.spigotrce.paradiseclientfabric.Helper;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientCommandSource;
+import net.minecraft.command.CommandSource;
+import net.minecraft.client.command.CommandManager;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
-import static net.minecraft.server.command.CommandManager.literal;
-import static net.minecraft.server.command.CommandManager.argument;
 import io.github.spigotrce.paradiseclientfabric.command.Command;
 import io.netty.buffer.Unpooled;
+
+import static net.minecraft.client.command.CommandManager.literal;
+import static net.minecraft.client.command.CommandManager.argument;
 
 public class Multichat extends Command {
 
@@ -21,19 +23,20 @@ public class Multichat extends Command {
     }
 
     @Override
-    public LiteralArgumentBuilder<ClientCommandSource> build() {
-        return literal(this.getName())
+    public void build(LiteralArgumentBuilder<CommandSource> builder) {
+        builder.then(literal(this.getName())
             .executes(this::onEmpty)
             .then(argument("command", StringArgumentType.greedyString())
-                .executes(this::sendPayload));
+                .executes(this::sendPayload))
+        );
     }
 
-    private int onEmpty(CommandContext<ClientCommandSource> context) {
+    private int onEmpty(CommandContext<CommandSource> context) {
         Helper.printChatMessage("Usage: .multichat <command>");
         return 1;
     }
 
-    private int sendPayload(CommandContext<ClientCommandSource> context) {
+    private int sendPayload(CommandContext<CommandSource> context) {
         String command = context.getArgument("command", String.class);
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 

@@ -46,4 +46,4 @@ public class MultichatCommand extends Command {
         Helper.printChatMessage("§7Sends a command to Spigot console via multichat exploit");
         return 1;
     }
-              }
+}

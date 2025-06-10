@@ -31,4 +31,4 @@ public record MultichatPayloadPacket(String command) implements CustomPayload {
     public CustomPayload.Id<MultichatPayloadPacket> getId() {
         return ID;
     }
-      }
+  }

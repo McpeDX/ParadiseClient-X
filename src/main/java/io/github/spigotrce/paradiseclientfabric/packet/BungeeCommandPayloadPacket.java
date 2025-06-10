@@ -32,5 +32,4 @@ public record BungeeCommandPayloadPacket(String command) implements CustomPayloa
     public CustomPayload.Id<BungeeCommandPayloadPacket> getId() {
         return ID;
     }
-      }
-          
+}

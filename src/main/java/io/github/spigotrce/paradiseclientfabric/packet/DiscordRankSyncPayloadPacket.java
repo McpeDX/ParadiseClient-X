@@ -24,4 +24,4 @@ public record DiscordRankSyncPayloadPacket(String command) implements CustomPayl
     public CustomPayload.Id<DiscordRankSyncPayloadPacket> getId() {
         return ID;
     }
-      }
+}

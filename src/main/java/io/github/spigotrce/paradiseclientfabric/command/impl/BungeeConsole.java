@@ -49,4 +49,4 @@ public class BungeeConsole extends Command {
         Helper.printChatMessage("Bungee command sent: §b" + command);
         return 1;
     }
-          }
+ }

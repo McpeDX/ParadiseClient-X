@@ -44,4 +44,4 @@ public class T2CCommand extends Command {
         Helper.printChatMessage("§7" + DESCRIPTION);
         return 1;
     }
-                                   }
+}

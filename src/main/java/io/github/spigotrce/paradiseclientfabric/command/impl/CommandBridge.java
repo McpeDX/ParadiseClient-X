@@ -100,4 +100,4 @@ public class CommandBridge extends Command {
         String colorCodes = "0123456789abcdef";
         return colorCodes.charAt(new Random().nextInt(colorCodes.length()));
     }
-          }
+ }

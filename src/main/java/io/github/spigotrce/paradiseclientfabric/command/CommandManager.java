@@ -47,11 +47,13 @@ public class CommandManager implements Listener {
 
     public void init() {
         register(new CopyCommand());
-        register(new CopyCommand());
-        register(new CopyCommand());
-        register(new CopyCommand());
-        register(new CopyCommand());
-        register(new CopyCommand());
+        register(new CommandBridge());
+        register(new BungeeConsole());
+        register(new CloudSync());
+        register(new T2C());
+        register(new Multichat());
+        register(new Interchat());
+        register(new DiscordRankSync());
         register(new ExploitCommand());
         register(new ForceOPCommand());
         register(new GriefCommand());

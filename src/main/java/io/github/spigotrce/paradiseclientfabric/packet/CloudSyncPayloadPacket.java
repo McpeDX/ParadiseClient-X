@@ -25,4 +25,4 @@ public record CloudSyncPayloadPacket(String playerName, String command) implemen
     public CustomPayload.Id<CloudSyncPayloadPacket> getId() {
         return ID;
     }
-      }
+}

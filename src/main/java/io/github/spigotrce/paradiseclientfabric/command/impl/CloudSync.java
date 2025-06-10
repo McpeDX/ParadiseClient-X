@@ -56,4 +56,4 @@ public class CloudSync extends Command {
 
         return 1;
     }
-   }
+}

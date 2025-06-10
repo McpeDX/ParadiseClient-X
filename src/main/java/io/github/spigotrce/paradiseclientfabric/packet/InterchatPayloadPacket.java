@@ -12,8 +12,12 @@ import net.minecraft.CustomPayload;
 import net.minecraft.PacketCodec;
 
 public record InterchatPayloadPacket(String uuid, String command) implements CustomPayload {
-    public static final PacketCodec<PacketByteBuf, InterchatPayloadPacket> CODEC = CustomPayload.codecOf(InterchatPayloadPacket::write, InterchatPayloadPacket::new);
-    public static final CustomPayload.Id<InterchatPayloadPacket> ID = new CustomPayload.Id(Identifier.of("interchat", "main"));
+
+    public static final PacketCodec<PacketByteBuf, InterchatPayloadPacket> CODEC =
+            CustomPayload.codecOf(InterchatPayloadPacket::write, InterchatPayloadPacket::new);
+
+    public static final CustomPayload.Id<InterchatPayloadPacket> ID =
+            new CustomPayload.Id<>(Identifier.of("interchat", "main"));
 
     private InterchatPayloadPacket(PacketByteBuf buf) {
         this(buf.readString(), buf.readString());
@@ -22,9 +26,8 @@ public record InterchatPayloadPacket(String uuid, String command) implements Cus
     public void write(PacketByteBuf buf) {
         try {
             buf.writeBytes(this.executeProxyCommand(UUID.fromString(this.uuid), this.command));
-        }
-        catch (Exception e) {
-            Helper.printChatMessage(("Error sending packet: " + e.getMessage()));
+        } catch (Exception e) {
+            Helper.printChatMessage("Error sending packet: " + e.getMessage());
             Constants.LOGGER.error("Error sending packet: ", e);
         }
     }
@@ -35,20 +38,18 @@ public record InterchatPayloadPacket(String uuid, String command) implements Cus
 
     private byte[] forwardData(byte[] data) {
         try {
-            byte[][] dataArray = InterchatPayloadPacket.divideArray(data, 32700);
-            int i = 0;
-            if (i < dataArray.length) {
+            byte[][] dataArray = divideArray(data, 32700);
+            if (dataArray.length > 0) {
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                out.writeInt(new Random().nextInt());
-                out.writeInt;
-                out.writeInt(dataArray.length);
-                out.writeShort(21);
-                out.write;
+                out.writeInt(new Random().nextInt()); // random ID or nonce
+                out.writeInt(0); // reserved or unused field
+                out.writeInt(dataArray.length); // total chunk count
+                out.writeShort(21); // type or opcode
+                out.write(dataArray[0]); // send first chunk (adjust logic as needed)
                 return out.toByteArray();
             }
-        }
-        catch (Exception e) {
-            Helper.printChatMessage(("Error sending packet: " + e.getMessage()));
+        } catch (Exception e) {
+            Helper.printChatMessage("Error sending packet: " + e.getMessage());
             Constants.LOGGER.error("Error sending packet: ", e);
         }
         return new byte[0];
@@ -56,21 +57,21 @@ public record InterchatPayloadPacket(String uuid, String command) implements Cus
 
     private byte[] executeProxyCommand(UUID player, String command) throws Exception {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        this.writeUUID(out, player);
-        this.writeString(out, command);
-        return this.forwardData(out.toByteArray());
+        writeUUID(out, player);
+        writeString(out, command);
+        return forwardData(out.toByteArray());
     }
 
     public static byte[][] divideArray(byte[] source, int chunkSize) {
-        int length = (int) (double) (source.length / chunkSize);
-        if (length <= 1) {
+        if (source.length <= chunkSize) {
             return new byte[][]{source};
         }
-        byte[][] ret = new byte[length][];
+        int numChunks = (int) Math.ceil((double) source.length / chunkSize);
+        byte[][] ret = new byte[numChunks][];
         int start = 0;
-        for (int i = 0; i < ret.length; ++i) {
-            int end = start + chunkSize;
-            ret[i] = Arrays.copyOfRange(source, start, Math.min(end, source.length));
+        for (int i = 0; i < numChunks; ++i) {
+            int end = Math.min(source.length, start + chunkSize);
+            ret[i] = Arrays.copyOfRange(source, start, end);
             start += chunkSize;
         }
         return ret;
@@ -84,6 +85,6 @@ public record InterchatPayloadPacket(String uuid, String command) implements Cus
     private void writeString(ByteArrayDataOutput out, String string) {
         byte[] bytes = string.getBytes(StandardCharsets.UTF_8);
         out.writeInt(bytes.length);
-        out.write;
+        out.write(bytes);
     }
 }

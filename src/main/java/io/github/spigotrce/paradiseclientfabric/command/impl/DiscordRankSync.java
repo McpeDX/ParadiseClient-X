@@ -47,4 +47,4 @@ public class DiscordRankSync extends Command {
             return -1;
         }
     }
-          }
+  }

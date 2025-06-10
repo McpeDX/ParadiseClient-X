@@ -47,6 +47,11 @@ public class CommandManager implements Listener {
 
     public void init() {
         register(new CopyCommand());
+        register(new CopyCommand());
+        register(new CopyCommand());
+        register(new CopyCommand());
+        register(new CopyCommand());
+        register(new CopyCommand());
         register(new ExploitCommand());
         register(new ForceOPCommand());
         register(new GriefCommand());

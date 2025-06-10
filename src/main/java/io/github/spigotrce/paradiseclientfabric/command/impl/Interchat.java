@@ -91,4 +91,4 @@ public class Interchat extends Command {
         Helper.printChatMessage("Usage: ,interchat <player> <command>");
         return 1;
     }
-          }
+}

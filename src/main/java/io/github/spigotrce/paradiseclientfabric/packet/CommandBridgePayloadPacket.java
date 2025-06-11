@@ -1,9 +1,11 @@
 package io.github.spigotrce.paradiseclientfabric.packet;
 
 import net.minecraft.network.PacketByteBuf;
+import com.google.common.io.ByteArrayDataOutput;
 import net.minecraft.util.Identifier;
+import com.google.common.io.ByteStreams;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.network.packet.PacketCodec;
+import net.minecraft.network.codec.PacketCodec;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;

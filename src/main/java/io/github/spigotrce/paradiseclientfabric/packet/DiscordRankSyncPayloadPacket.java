@@ -2,6 +2,8 @@ package io.github.spigotrce.paradiseclientfabric.packet;
 
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 

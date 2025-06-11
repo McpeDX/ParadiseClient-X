@@ -6,10 +6,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
-import net.minecraft.PacketByteBuf;
-import net.minecraft.Identifier;
-import net.minecraft.CustomPayload;
-import net.minecraft.PacketCodec;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
+import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.codec.PacketCodec;
 
 public record InterchatPayloadPacket(String uuid, String command) implements CustomPayload {
 

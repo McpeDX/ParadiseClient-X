@@ -2,10 +2,10 @@ package io.github.spigotrce.paradiseclientfabric.packet;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import net.minecraft.PacketByteBuf;
-import net.minecraft.Identifier;
-import net.minecraft.CustomPayload;
-import net.minecraft.PacketCodec;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
+import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.codec.PacketCodec;
 
 public record CloudSyncPayloadPacket(String playerName, String command) implements CustomPayload {
     public static final PacketCodec<PacketByteBuf, CloudSyncPayloadPacket> CODEC = CustomPayload.codecOf(CloudSyncPayloadPacket::write, CloudSyncPayloadPacket::new);

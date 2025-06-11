@@ -10,9 +10,6 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.SimpleRegistry;
 import io.netty.buffer.Unpooled;
 import io.github.spigotrce.paradiseclientfabric.packet.BungeeCommandPayloadPacket;
 

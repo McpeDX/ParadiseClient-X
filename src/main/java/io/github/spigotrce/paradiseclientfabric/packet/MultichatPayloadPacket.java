@@ -2,11 +2,13 @@ package io.github.spigotrce.paradiseclientfabric.packet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import com.google.common.io.ByteArrayDataOutput;
 import java.io.IOException;
-import net.minecraft.PacketByteBuf;
-import net.minecraft.Identifier;
-import net.minecraft.CustomPayload;
-import net.minecraft.PacketCodec;
+import com.google.common.io.ByteStreams;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
+import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.codec.PacketCodec;
 
 public record MultichatPayloadPacket(String command) implements CustomPayload {
     public static final PacketCodec<PacketByteBuf, MultichatPayloadPacket> CODEC = CustomPayload.codecOf(MultichatPayloadPacket::write, MultichatPayloadPacket::new);
@@ -31,4 +33,4 @@ public record MultichatPayloadPacket(String command) implements CustomPayload {
     public CustomPayload.Id<MultichatPayloadPacket> getId() {
         return ID;
     }
-  }
+}

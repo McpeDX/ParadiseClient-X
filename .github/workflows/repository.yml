@@ -42,16 +42,20 @@ jobs:
               BASE_JAR_FILES+=("$file")
             fi
           done
-
           if [ ${#BASE_JAR_FILES[@]} -ne 1 ]; then
             echo "Error: Expected exactly one base version JAR file, found ${#BASE_JAR_FILES[@]}"
             exit 1
           fi
-
           JAR_FILE="${BASE_JAR_FILES[0]}"
           JAR_NAME=$(basename "$JAR_FILE")
           echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
           echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
+
+      - name: Upload JAR to GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ParadiseClient
+          path: ${{ env.JAR_FILE }}
 
       - name: Upload artifact to Nexus
         run: |

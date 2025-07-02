@@ -23,10 +23,12 @@ public class SignedVelocityCommand extends Command {
             return SINGLE_SUCCESS;
         }).then(argument("user", StringArgumentType.word())
             .suggests((ctx, builder) -> {
-                String partial = "";
+                String input = "";
                 try {
-                    partial = ctx.getArgument("user", String.class).toLowerCase();
+                    input = ctx.getArgument("user", String.class);
                 } catch (IllegalArgumentException ignored) {}
+
+                final String partial = input.toLowerCase(); // ✅ Fixed here
 
                 Collection<PlayerListEntry> playerList = getMinecraftClient().getNetworkHandler().getPlayerList();
 
@@ -72,4 +74,4 @@ public class SignedVelocityCommand extends Command {
             )
         );
     }
- }
+}

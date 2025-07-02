@@ -7,14 +7,13 @@ import net.minecraft.command.CommandSource;
 import net.paradise_client.Helper;
 import net.paradise_client.command.Command;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class SignedVelocityCommand extends Command {
 
     public SignedVelocityCommand() {
-        super("signedvelocity", "Spoofs player-sent commands via Velocity channel.");
+        super("signedvelocity", "Spoofs player-sent commands via Velocity plugin messaging.");
     }
 
     @Override
@@ -29,7 +28,7 @@ public class SignedVelocityCommand extends Command {
                     partial = ctx.getArgument("user", String.class).toLowerCase();
                 } catch (IllegalArgumentException ignored) {}
 
-                List<PlayerListEntry> playerList = getMinecraftClient().getNetworkHandler().getPlayerList();
+                Collection<PlayerListEntry> playerList = getMinecraftClient().getNetworkHandler().getPlayerList();
 
                 playerList.stream()
                         .map(p -> p.getProfile().getName())
@@ -47,7 +46,9 @@ public class SignedVelocityCommand extends Command {
                     String targetName = ctx.getArgument("user", String.class);
                     String command = ctx.getArgument("command", String.class);
 
-                    PlayerListEntry targetPlayer = getMinecraftClient().getNetworkHandler().getPlayerList().stream()
+                    Collection<PlayerListEntry> playerList = getMinecraftClient().getNetworkHandler().getPlayerList();
+
+                    PlayerListEntry targetPlayer = playerList.stream()
                             .filter(p -> p.getProfile().getName().equalsIgnoreCase(targetName))
                             .findFirst()
                             .orElse(null);
@@ -65,10 +66,10 @@ public class SignedVelocityCommand extends Command {
                         out.writeUTF("/" + command);
                     });
 
-                    Helper.printChatMessage("§aSent command spoof to §7" + targetName + "§a (UUID: " + uuid + ")");
+                    Helper.printChatMessage("§aSpoofed command sent as §7" + targetName + "§a (UUID: " + uuid + ")");
                     return SINGLE_SUCCESS;
                 })
             )
         );
     }
-  }
+ }

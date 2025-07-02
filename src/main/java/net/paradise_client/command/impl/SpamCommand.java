@@ -60,7 +60,7 @@ public class SpamCommand extends Command {
                                     int watchdogCounter = 0;
 
                                     for (int i = 0; i < repeat && isRunning; i++) {
-                                        if (net == null || net.getConnection().isDisconnected()) {
+                                        if (getMinecraftClient().world == null || getMinecraftClient().player == null) {
                                             Helper.printChatMessage("§cDisconnected from server. Stopping spam.");
                                             isRunning = false;
                                             return;
@@ -105,7 +105,7 @@ public class SpamCommand extends Command {
      */
     private String applyBypassMode(String command, String mode, Random random) {
         switch (mode) {
-            case "essx": // EssentialsX
+            case "essx": // EssentialsX noise
                 return command + " #" + random.nextInt(1000);
             case "chatcontrol":
                 return command + " |" + random.nextInt(10000);

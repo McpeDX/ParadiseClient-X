@@ -2,9 +2,12 @@ package net.paradise_client.command.impl;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+package net.paradise_client.command.impl;
+
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandSource;
-import net.minecraft.util.Util;
 import net.paradise_client.Helper;
 import net.paradise_client.command.Command;
 
@@ -108,7 +111,7 @@ public class AuthMeVelocityBypassCommand extends Command {
     }
 
     private String generateFakeToken(String name) {
-        return Util.getUuidAsString(UUID.nameUUIDFromBytes(("Token:" + name + System.currentTimeMillis()).getBytes()));
+        return UUID.nameUUIDFromBytes(("Token:" + name + System.currentTimeMillis()).getBytes()).toString();
     }
 
     private void delay(int ms) {

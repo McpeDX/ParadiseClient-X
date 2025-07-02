@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NEXUS_AUTH_SET: ${{ secrets.NEXUS_USERNAME && secrets.NEXUS_PASSWORD && 'true' || 'false' }}
 
     steps:
       - name: Checkout code
@@ -54,7 +56,7 @@ jobs:
           echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
 
       - name: Upload artifact to Nexus
-        if: ${{ secrets.NEXUS_USERNAME != '' && secrets.NEXUS_PASSWORD != '' }}
+        if: env.NEXUS_AUTH_SET == 'true'
         run: |
           curl -X PUT "https://paradise-client.net/api/versions" \
                -u "${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }}" \

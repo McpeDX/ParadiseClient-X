@@ -20,7 +20,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.paradise_client.inject.accessor.ClientConnectionAccessor;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

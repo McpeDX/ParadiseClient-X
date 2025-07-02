@@ -26,41 +26,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Utility class providing various helper methods for Minecraft client operations.
- * <p>
- * This class includes methods for generating chroma colors, sending chat messages,
- * parsing and formatting colored text, and more.
- * </p>
- *
- * @author SpigotRCE
- * @since 1.0
+ * Includes chat message formatting, plugin message sending, random generation, notifications, and more.
  */
 public class Helper {
-    /**
-     * Generates a chroma color based on the current time and given delay.
-     *
-     * @param delay      The delay in milliseconds to affect the color shift.
-     * @param saturation The saturation of the color.
-     * @param brightness The brightness of the color.
-     * @return The generated {@link Color} object.
-     */
+
     public static Color getChroma(int delay, float saturation, float brightness) {
         double chroma = Math.ceil((double) (System.currentTimeMillis() + delay) / 20);
         chroma %= 360;
         return Color.getHSBColor((float) (chroma / 360), saturation, brightness);
     }
 
-    /**
-     * Sends a chat message to the Minecraft player.
-     *
-     * @param message The message to be sent.
-     */
     public static void printChatMessage(String message) {
         printChatMessage(message, true);
     }
@@ -77,13 +56,6 @@ public class Helper {
         return "&aParadise&bClient &r" + text;
     }
 
-    /**
-     * Checks if a string can be parsed as a number.
-     *
-     * @param s The string to check.
-     * @return {@code true} if the string is a valid number, {@code false} otherwise.
-     */
-    @SuppressWarnings("unused")
     public static boolean isNumber(String s) {
         try {
             Double.parseDouble(s);
@@ -93,20 +65,10 @@ public class Helper {
         }
     }
 
-    /**
-     * Sends a network packet to the Minecraft server.
-     *
-     * @param packet The packet to be sent.
-     */
     public static void sendPacket(Packet<?> packet) {
         Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).sendPacket(packet);
     }
 
-    /**
-     * Sends a bungeecord packet to the Minecraft server.
-     *
-     * @param packet The packet to be sent.
-     */
     public static void sendPacket(DefinedPacket packet) {
         ((ClientConnectionAccessor)
                 MinecraftClient.getInstance().getNetworkHandler()
@@ -124,48 +86,34 @@ public class Helper {
         sendPacket(message);
     }
 
+    // ✅ NEW METHOD: Check if a plugin message channel is registered
+    public static boolean isPluginChannelRegistered(String channel) {
+        if (MinecraftClient.getInstance().getNetworkHandler() == null) return false;
+        return MinecraftClient.getInstance()
+                .getNetworkHandler()
+                .getChannelNames()
+                .contains(channel);
+    }
+
     public static Protocol getBungeeProtocolForPhase(NetworkPhase phase) {
-        switch (phase) {
-            case HANDSHAKING -> {
-                return Protocol.HANDSHAKE;
-            }
-            case PLAY -> {
-                return Protocol.GAME;
-            }
-            case STATUS -> {
-                return Protocol.STATUS;
-            }
-            case LOGIN -> {
-                return Protocol.LOGIN;
-            }
-            case CONFIGURATION -> {
-                return Protocol.CONFIGURATION;
-            }
+        return switch (phase) {
+            case HANDSHAKING -> Protocol.HANDSHAKE;
+            case PLAY -> Protocol.GAME;
+            case STATUS -> Protocol.STATUS;
+            case LOGIN -> Protocol.LOGIN;
+            case CONFIGURATION -> Protocol.CONFIGURATION;
             default -> throw new IllegalArgumentException("Unknown protocol state: " + phase.getId());
-        }
+        };
     }
 
     public static Protocol getBungeeProtocolForCurrentPhase() {
         return getBungeeProtocolForPhase(ParadiseClient.NETWORK_CONFIGURATION.phase);
     }
 
-    /**
-     * Parses a string message into a colored {@link Text} object.
-     *
-     * @param message The message to be parsed.
-     * @return The formatted {@link Text} object.
-     */
     public static Text parseColoredText(String message) {
         return parseColoredText(message, null);
     }
 
-    /**
-     * Parses a string message into a colored {@link Text} object with an optional click-to-copy action.
-     *
-     * @param message     The message to be parsed.
-     * @param copyMessage The message to copy to the clipboard when clicked, or {@code null} for no action.
-     * @return The formatted {@link Text} object.
-     */
     public static Text parseColoredText(String message, String copyMessage) {
         MutableText text = Text.literal("");
         String[] parts = message.split("(?=&)");
@@ -199,12 +147,6 @@ public class Helper {
         return text;
     }
 
-    /**
-     * Converts a color code string to a {@link Formatting} enum value.
-     *
-     * @param code The color code string (e.g., "&0", "&1").
-     * @return The corresponding {@link Formatting} value.
-     */
     private static Formatting getColorFromCode(String code) {
         return switch (code) {
             case "&0" -> Formatting.BLACK;
@@ -232,27 +174,11 @@ public class Helper {
         };
     }
 
-    /**
-     * Capitalizes the first letter of a string.
-     *
-     * @param str The string to capitalize.
-     * @return The string with the first letter capitalized, or the original string if it is null or empty.
-     */
     public static String capitalizeFirstLetter(String str) {
-        if (str == null || str.isEmpty()) {
-            return str;
-        }
+        if (str == null || str.isEmpty()) return str;
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    /**
-     * Generates a random string.
-     *
-     * @param length     The length of the created string.
-     * @param characters The charset the generator will use.
-     * @param random     The {@link Random} instance the generator will use.
-     * @return The random string generated.
-     */
     public static String generateRandomString(int length, String characters, Random random) {
         StringBuilder result = new StringBuilder(length);
         for (int i = 0; i < length; i++)
@@ -261,9 +187,7 @@ public class Helper {
     }
 
     public static String getLatestReleaseTag() throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(
-                "http://paradise-client.net/api/versions"
-        ).openConnection();
+        HttpURLConnection connection = (HttpURLConnection) new URL("http://paradise-client.net/api/versions").openConnection();
         connection.setRequestProperty("Accept", "application/json");
         connection.setRequestMethod("GET");
 
@@ -271,8 +195,7 @@ public class Helper {
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuilder response = new StringBuilder();
             String line;
-            while ((line = reader.readLine()) != null)
-                response.append(line);
+            while ((line = reader.readLine()) != null) response.append(line);
             reader.close();
 
             JsonObject responseObject = JsonParser.parseString(response.toString()).getAsJsonObject();
@@ -315,7 +238,6 @@ public class Helper {
         new Thread(runnable).start();
     }
 
-    @SuppressWarnings("unused")
     public static class ByteArrayOutput {
         private final ByteArrayDataOutput out;
 
@@ -338,7 +260,7 @@ public class Helper {
     }
 
     @FunctionalInterface
-    public static interface PluginMessageEncoder {
+    public interface PluginMessageEncoder {
         void encode(ByteArrayDataOutput out);
     }
-}
+        }

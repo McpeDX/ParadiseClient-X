@@ -29,6 +29,7 @@ public class GriefCommand extends Command {
                     return SINGLE_SUCCESS;
                 })
             )
+
             .then(literal("fill")
                 .then(literal("air").executes(context -> runFill("air")))
                 .then(literal("lava").executes(context -> runFill("lava")))
@@ -38,6 +39,7 @@ public class GriefCommand extends Command {
                     return SINGLE_SUCCESS;
                 })
             )
+
             .then(literal("sphere")
                 .then(literal("air").executes(context -> runSphere("air", 10)))
                 .then(literal("lava").executes(context -> runSphere("lava", 10)))
@@ -47,36 +49,59 @@ public class GriefCommand extends Command {
                     return SINGLE_SUCCESS;
                 })
             )
+
             .then(literal("walls")
-                .then(literal("bedrock").executes(context -> sendChatCommand("/walls bedrock")))
-                .then(literal("lava").executes(context -> sendChatCommand("/walls lava")))
+                .then(literal("bedrock").executes(context -> {
+                    sendChatCommand("/walls bedrock");
+                    return SINGLE_SUCCESS;
+                }))
+                .then(literal("lava").executes(context -> {
+                    sendChatCommand("/walls lava");
+                    return SINGLE_SUCCESS;
+                }))
                 .executes(context -> {
                     error("walls <bedrock|lava>");
                     return SINGLE_SUCCESS;
                 })
             )
+
             .then(literal("cyl")
-                .then(literal("lava").executes(context -> sendChatCommand("/cyl lava 5 10")))
-                .then(literal("tnt").executes(context -> sendChatCommand("/cyl tnt 5 10")))
+                .then(literal("lava").executes(context -> {
+                    sendChatCommand("/cyl lava 5 10");
+                    return SINGLE_SUCCESS;
+                }))
+                .then(literal("tnt").executes(context -> {
+                    sendChatCommand("/cyl tnt 5 10");
+                    return SINGLE_SUCCESS;
+                }))
                 .executes(context -> {
                     error("cyl <lava|tnt>");
                     return SINGLE_SUCCESS;
                 })
             )
+
             .then(literal("set")
-                .then(literal("lava").executes(context -> sendChatCommand("//set lava")))
-                .then(literal("tnt").executes(context -> sendChatCommand("//set tnt")))
+                .then(literal("lava").executes(context -> {
+                    sendChatCommand("//set lava");
+                    return SINGLE_SUCCESS;
+                }))
+                .then(literal("tnt").executes(context -> {
+                    sendChatCommand("//set tnt");
+                    return SINGLE_SUCCESS;
+                }))
                 .executes(context -> {
                     error("set <lava|tnt>");
                     return SINGLE_SUCCESS;
                 })
             )
+
             .then(literal("undo")
                 .executes(context -> {
                     sendChatCommand("//undo");
                     return SINGLE_SUCCESS;
                 })
             )
+
             .executes(context -> {
                 error("<tpall|fill|sphere|walls|cyl|set|undo>");
                 return SINGLE_SUCCESS;
@@ -105,7 +130,7 @@ public class GriefCommand extends Command {
     private void sendChatCommands(String... commands) {
         for (String command : commands) {
             sendChatCommand(command);
-            sleep(100); // optional small delay to prevent kick
+            sleep(100); // slight delay between commands
         }
     }
 

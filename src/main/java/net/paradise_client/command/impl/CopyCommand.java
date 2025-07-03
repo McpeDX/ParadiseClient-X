@@ -10,43 +10,68 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
 /**
- * This class represents a command that copies a specific broadcast message to the clipboard.
- * The command is part of the ParadiseClientFabric mod for Minecraft.
- *
- * @author SpigotRCE
- * @version 1.0
+ * Upgraded CopyCommand that provides multiple broadcast payload formats.
+ * Useful for quick exploit or advertisement copy-paste usage.
+ * Author: SpigotRCE
  */
 public class CopyCommand extends Command {
 
-    /**
-     * Constructs a new CopyCommand instance.
-     */
     public CopyCommand() {
-        super("copy", "Copies the broadcast of SpigotRCE");
+        super("copy", "Copies broadcast payloads to clipboard (SpigotRCE)");
     }
 
-    /**
-     * Builds the command structure using Brigadier's LiteralArgumentBuilder.
-     * The command has two sub-commands: "tellraw" and the default command.
-     */
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> root) {
-        root.then(literal("tellraw")
-                        .executes((context) -> {
-                            // Copies a specific tellraw message to the clipboard.
-                            StringSelection stringSelection = new StringSelection("tellraw @a [{\"text\":\"Server hacked by\\n\", \"color\":\"green\"},{\"text\":\"https://youtube.com/@SpigotRCE\", \"color\":\"aqua\", \"bold\":true, \"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://youtube.com/@SpigotRCE\"}}]");
-                            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                            clipboard.setContents(stringSelection, null);
-                            Helper.printChatMessage("SpigotRCE's tellraw has been copied to your clipboard.");
-                            return SINGLE_SUCCESS;
-                        }))
-                .executes((context) -> {
-                    // Copies a specific formatted message to the clipboard.
-                    StringSelection stringSelection = new StringSelection("&aServer hacked by&b&l https://youtube.com/@SpigotRCE");
-                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    clipboard.setContents(stringSelection, null);
-                    Helper.printChatMessage("SpigotRCE's broadcast has been copied to your clipboard.");
-                    return SINGLE_SUCCESS;
-                });
+        root
+            .then(literal("tellraw").executes(ctx -> {
+                return copyToClipboard(
+                        "tellraw @a [{\"text\":\"Server hacked by\\n\", \"color\":\"green\"}," +
+                                "{\"text\":\"https://youtube.com/@SpigotRCE\", \"color\":\"aqua\", \"bold\":true," +
+                                "\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://youtube.com/@SpigotRCE\"}}]",
+                        "&7[&aCopied&7] &fTellraw broadcast copied.");
+            }))
+            .then(literal("legacy").executes(ctx -> {
+                return copyToClipboard(
+                        "&aServer hacked by &b&lhttps://youtube.com/@SpigotRCE",
+                        "&7[&aCopied&7] &fLegacy color-code message copied.");
+            }))
+            .then(literal("minimessage").executes(ctx -> {
+                return copyToClipboard(
+                        "<green>Server hacked by <aqua><bold>https://youtube.com/@SpigotRCE",
+                        "&7[&aCopied&7] &fMiniMessage format copied.");
+            }))
+            .then(literal("motd").executes(ctx -> {
+                return copyToClipboard(
+                        "§aServer hacked by §b§lhttps://youtube.com/@SpigotRCE",
+                        "&7[&aCopied&7] &fMOTD message copied.");
+            }))
+            .then(literal("hover").executes(ctx -> {
+                return copyToClipboard(
+                        "tellraw @a [{\"text\":\"Click Here\",\"color\":\"gold\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"Server hacked by SpigotRCE\",\"color\":\"red\"}]}},\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://youtube.com/@SpigotRCE\"}}]",
+                        "&7[&aCopied&7] &fHover/click tellraw copied.");
+            }))
+            .then(literal("discord").executes(ctx -> {
+                return copyToClipboard(
+                        "**Server hacked by** https://youtube.com/@SpigotRCE",
+                        "&7[&aCopied&7] &fDiscord embed text copied.");
+            }))
+            .executes(ctx -> {
+                return copyToClipboard(
+                        "&aServer hacked by &b&lhttps://youtube.com/@SpigotRCE",
+                        "&7[&aCopied&7] &fDefault legacy format copied.");
+            });
+    }
+
+    private int copyToClipboard(String text, String feedback) {
+        try {
+            StringSelection selection = new StringSelection(text);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(selection, null);
+            Helper.printChatMessage(feedback);
+        } catch (Exception e) {
+            Helper.printChatMessage("&cClipboard not supported on this platform. Here's the string:");
+            Helper.printChatMessage(text);
+        }
+        return SINGLE_SUCCESS;
     }
 }

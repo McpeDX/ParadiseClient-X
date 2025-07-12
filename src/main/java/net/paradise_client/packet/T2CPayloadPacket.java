@@ -27,12 +27,12 @@ public final class T2CPayloadPacket implements CustomPayload {
         return command;
     }
 
-    @Override
+    // Removed @Override since getId() might not be abstract in your version
     public Id<? extends CustomPayload> getId() {
         return ID;
     }
 
-    @Override
+    @Override // This one is likely still required
     public void write(PacketByteBuf buf) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("T2Code-Console");
@@ -41,19 +41,16 @@ public final class T2CPayloadPacket implements CustomPayload {
         Helper.printChatMessage("§aPayload serialized!");
     }
 
-    // No  (not declared in CustomPayload)
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof T2CPayloadPacket other)) return false;
         return this.command.equals(other.command);
     }
 
-    // No (not declared in CustomPayload)
     public int hashCode() {
         return command.hashCode();
     }
 
-    // No (not declared in CustomPayload)
     public String toString() {
         return "T2CPayloadPacket[command=" + command + "]";
     }

@@ -27,12 +27,12 @@ public final class T2CPayloadPacket implements CustomPayload {
         return command;
     }
 
-    // Removed @Override since getId() might not be abstract in your version
+    // Removed  since getId() might not be abstract in your version
     public Id<? extends CustomPayload> getId() {
         return ID;
     }
 
-    @Override // This one is likely still required
+     // This one is likely still required
     public void write(PacketByteBuf buf) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("T2Code-Console");

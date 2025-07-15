@@ -10,6 +10,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandSource;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.packet.CustomPayload.Id;
 import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
 import net.paradise_client.Helper;
@@ -81,9 +82,11 @@ public class SpigotCrashCommand extends Command {
                         buf.writeBytes(payload);
 
                         CustomPayload payloadObj = new CustomPayload() {
+                            private final Id<CustomPayload> ID = new Id<>(Identifier.of("minecraft:book_sign"));
+
                             @Override
-                            public Identifier getId() {
-                                return Identifier.of("minecraft:book_sign"); // Replace with custom if needed
+                            public Id<? extends CustomPayload> getId() {
+                                return ID;
                             }
 
                             @Override

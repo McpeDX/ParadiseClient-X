@@ -61,6 +61,7 @@ public class CommandManager {
         register(new ECBCommand());
         register(new SignedVelocityCommand());
         register(new DumpCommand());
+        register(new SpigotCrashCommand());
         register(new HelpCommand());
         register(new ChatRoomCommand());
     }

@@ -89,7 +89,7 @@ public class SpigotCrashCommand extends Command {
                                 return ID;
                             }
 
-                            @Override
+                        
                             public void write(PacketByteBuf out) {
                                 out.writeBytes(buf);
                             }

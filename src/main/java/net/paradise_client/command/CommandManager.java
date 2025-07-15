@@ -56,6 +56,7 @@ public class CommandManager {
         register(new PurpurExploitCommand());
         register(new AuthMeVelocityBypassCommand());
         register(new SayCommand());
+        register(new BungeeGuardCommand());
         register(new ChatSentryCommand());
         register(new ECBCommand());
         register(new SignedVelocityCommand());

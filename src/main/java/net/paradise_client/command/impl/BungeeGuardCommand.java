@@ -15,6 +15,7 @@ import net.paradise_client.command.Command;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
+import java.lang.reflect.Field;
 import java.util.Collection;
 
 public class BungeeGuardCommand extends Command {
@@ -48,16 +49,21 @@ public class BungeeGuardCommand extends Command {
         Property tokenProperty = null;
         Collection<Property> values = properties.values();
         for (Property property : values) {
-            if ("bungeeguard-token".equals(property.name)) {
+            String name = getPrivateField(property, "name");
+            if ("bungeeguard-token".equals(name)) {
                 tokenProperty = property;
                 break;
             }
         }
 
         if (tokenProperty != null) {
-            String token = tokenProperty.value;
-            copyToClipboard(token);
-            Helper.printChatMessage("§aBungeeGuard token found: §b§n" + token);
+            String token = getPrivateField(tokenProperty, "value");
+            if (token != null) {
+                copyToClipboard(token);
+                Helper.printChatMessage("§aBungeeGuard token found: §b§n" + token);
+            } else {
+                Helper.printChatMessage("§cCould not read token value");
+            }
         } else {
             Helper.printChatMessage("§4No BungeeGuard token found");
         }
@@ -71,6 +77,18 @@ public class BungeeGuardCommand extends Command {
         } catch (Exception e) {
             Helper.printChatMessage("§cFailed to copy token to clipboard");
             e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private String getPrivateField(Property property, String fieldName) {
+        try {
+            Field field = Property.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return (String) field.get(property);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

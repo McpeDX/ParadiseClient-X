@@ -48,14 +48,14 @@ public class BungeeGuardCommand extends Command {
         Property tokenProperty = null;
         Collection<Property> values = properties.values();
         for (Property property : values) {
-            if ("bungeeguard-token".equals(property.getName())) {
+            if ("bungeeguard-token".equals(property.name)) {
                 tokenProperty = property;
                 break;
             }
         }
 
         if (tokenProperty != null) {
-            String token = tokenProperty.getValue();
+            String token = tokenProperty.value;
             copyToClipboard(token);
             Helper.printChatMessage("§aBungeeGuard token found: §b§n" + token);
         } else {

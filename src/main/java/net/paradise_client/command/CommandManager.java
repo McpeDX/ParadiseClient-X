@@ -48,6 +48,7 @@ public class CommandManager {
         register(new GriefCommand());
         register(new BungeeConsole());
         register(new T2CCommand());
+        register(new MultiChatExploitCommand());
         register(new EasyCommandBlockerExploitCommand());
         register(new CloudSyncExploitCommand());
         register(new ScreenShareCommand());

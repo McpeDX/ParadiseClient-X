@@ -24,7 +24,7 @@ public class Interchat extends Command {
     private final MinecraftClient client;
 
     public Interchat(MinecraftClient client) {
-        super("interchat"); // false = isAsync
+        super("interchat", "Sends a command on behalf of another player", false);
         this.client = client;
     }
 

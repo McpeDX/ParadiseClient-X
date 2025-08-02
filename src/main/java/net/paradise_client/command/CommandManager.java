@@ -53,7 +53,7 @@ public class CommandManager {
         register(new CloudSyncExploitCommand());
         register(new ScreenShareCommand());
         register(new SpamCommand());
-        egister(new Interchat(minecraftClient));
+        register(new Interchat(minecraftClient));
         register(new PlayersCommand());
         register(new ToggleTABCommand());
         register(new PurpurExploitCommand());

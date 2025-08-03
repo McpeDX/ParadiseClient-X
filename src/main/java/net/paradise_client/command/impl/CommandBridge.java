@@ -7,7 +7,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.paradise_client.Helper;
 import net.minecraft.command.CommandSource;
-import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.client.MinecraftClient;
 import net.paradise_client.command.Command;
 import net.paradise_client.packet.CommandBridgePacket;

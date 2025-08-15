@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import io.github.spigotrce.paradiseclientfabric.Helper;
+import net.paradise_client.Helper;
 import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.client.MinecraftClient;

@@ -8,6 +8,7 @@ import net.paradise_client.Helper;
 import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
 import net.minecraft.client.MinecraftClient;
+import net.paradise_client.command.Command;
 import net.paradise_client.packet.DiscordRankSyncPacket;
 
 public class DiscordRankSync extends Command {

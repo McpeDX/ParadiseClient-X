@@ -15,24 +15,23 @@ public class DiscordRankSync extends Command {
     }
 
     @Override
-    public LiteralArgumentBuilder<CommandSource> build() {
-        return LiteralArgumentBuilder.<CommandSource>literal(this.getName())
+    public void build(LiteralArgumentBuilder<CommandSource> root) {
+        root
             .executes(this::incompleteCommand)
             .then(
-                com.mojang.brigadier.builder.RequiredArgumentBuilder
-                    .<CommandSource, String>argument("command", StringArgumentType.greedyString())
+                argument("command", StringArgumentType.greedyString())
                     .executes(context -> {
                         Helper.sendPacket(new CustomPayloadC2SPacket(
                             new DiscordRankSyncPacket(context.getArgument("command", String.class))
                         ));
                         Helper.printChatMessage("Payload sent!");
-                        return 1;
+                        return SINGLE_SUCCESS;
                     })
             );
     }
 
     private int incompleteCommand(CommandContext<CommandSource> context) {
         Helper.printChatMessage("Incomplete command!");
-        return 1;
+        return SINGLE_SUCCESS;
     }
 }

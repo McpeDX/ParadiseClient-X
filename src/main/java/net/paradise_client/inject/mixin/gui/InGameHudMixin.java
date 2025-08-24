@@ -24,8 +24,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static net.paradise_client.Helper.getChroma;
-
 /**
  * Mixin for the InGameHud class to inject custom HUD rendering behavior.
  * This mixin is used to display additional information on the HUD.
@@ -88,7 +86,7 @@ public abstract class InGameHudMixin {
 
         int i = 0;
         for (String s : text) {
-            renderTextWithChroma(context, s, 5, 5 + this.client.textRenderer.fontHeight * i);
+            renderTextRed(context, s, 5, 5 + this.client.textRenderer.fontHeight * i);
             i++;
         }
 
@@ -96,7 +94,7 @@ public abstract class InGameHudMixin {
     }
 
     /**
-     * Renders text with a chroma color effect.
+     * Renders text in solid red.
      *
      * @param ct The DrawContext used for rendering.
      * @param s  The string to render.
@@ -105,12 +103,13 @@ public abstract class InGameHudMixin {
      */
     @SuppressWarnings("SameParameterValue")
     @Unique
-    private void renderTextWithChroma(DrawContext ct, String s, int x, int y) {
+    private void renderTextRed(DrawContext ct, String s, int x, int y) {
         char[] chars = s.toCharArray();
         int i = 0;
         for (char aChar : chars) {
             String c = String.valueOf(aChar);
-            ct.drawText(this.client.textRenderer, c, x + i, y, getChroma(((int) Math.sqrt(x * x + y * y) * 10) + (i * -17), 1, 1).getRGB(), false);
+            // Solid red (ARGB: 0xFFFF0000)
+            ct.drawText(this.client.textRenderer, c, x + i, y, 0xFFFF0000, false);
             i += getTextRenderer().getWidth(c);
         }
     }

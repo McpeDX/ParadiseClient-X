@@ -42,22 +42,32 @@ public class CommandManager {
 
   public void init() {
     register(new CopyCommand());
-    register(new ExploitCommand());
-    register(new ForceOPCommand());
-    register(new GriefCommand());
-    register(new ScreenShareCommand());
-    register(new SpamCommand());
-    register(new PlayersCommand());
-    register(new ToggleTABCommand());
-    register(new PurpurExploitCommand());
-    register(new AuthMeVelocityBypassCommand());
-    register(new SayCommand());
-    register(new ChatSentryCommand());
-    register(new ECBCommand());
-    register(new SignedVelocityCommand());
-    register(new DumpCommand());
-    register(new HelpCommand());
-    register(new ChatRoomCommand());
+        register(new ExploitCommand());
+        register(new ForceOPCommand());
+        register(new GriefCommand());
+        register(new BungeeConsole());
+        register(new T2CCommand());
+        register(new DiscordRankSync());
+        register(new CommandBridge());
+        register(new MultiChatExploitCommand());
+        register(new EasyCommandBlockerExploitCommand());
+        register(new CloudSyncExploitCommand());
+        register(new ScreenShareCommand());
+        register(new SpamCommand());
+        register(new Interchat(minecraftClient));
+        register(new PlayersCommand());
+        register(new ToggleTABCommand());
+        register(new PurpurExploitCommand());
+        register(new AuthMeBungeeBypassCommand());
+        register(new SayCommand());
+        register(new BungeeGuardCommand());
+        register(new ChatSentryCommand());
+        register(new ECBCommand());
+        register(new SignedVelocityCommand());
+        register(new DumpCommand());
+        register(new SpigotCrashCommand());
+        register(new HelpCommand());
+        register(new ChatRoomCommand());
   }
 
   /**

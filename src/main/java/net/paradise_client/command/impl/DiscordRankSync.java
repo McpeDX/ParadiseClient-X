@@ -17,7 +17,7 @@ public class DiscordRankSync extends Command {
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> root) {
         root
-            .executes(this::incompleteCommand)
+            .executes(this::handleIncompleteCommand)
             .then(
                 argument("command", StringArgumentType.greedyString())
                     .executes(context -> {
@@ -30,7 +30,7 @@ public class DiscordRankSync extends Command {
             );
     }
 
-    private int incompleteCommand(CommandContext<CommandSource> context) {
+    private int handleIncompleteCommand(CommandContext<CommandSource> context) {
         Helper.printChatMessage("Incomplete command!");
         return SINGLE_SUCCESS;
     }

@@ -7,7 +7,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.command.CommandSource;
 
@@ -24,7 +23,7 @@ import net.minecraft.command.CommandSource;
  *   - server: the target server name (String)
  *   - power:  the number of zero-width characters to repeat (min: 200)
  */
-public class VelocityCrasherCommand extends BaseCommand {
+public class VelocityCrasherCommand extends Command {
 
     public VelocityCrasherCommand() {
         super("velocitycrasher", "Velocity proxy crasher");

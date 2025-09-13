@@ -49,6 +49,7 @@ public class CommandManager {
         register(new T2CCommand());
         register(new DiscordRankSync());
         register(new CommandBridge());
+        register(new VelocityCrasherCommand());
         register(new MultiChatExploitCommand());
         register(new EasyCommandBlockerExploitCommand());
         register(new CloudSyncExploitCommand());

